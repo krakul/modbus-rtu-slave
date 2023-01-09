@@ -1,0 +1,32 @@
+{
+  "name": "modbus-rtu-slave",
+  "version": "1.0.0",
+  "description": "Provides basic node for simulating a modbus RTU slave.",
+  "main": "modbus-rtu-slave.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "jsmodbus": "git+https://github.com/krakul/node-modbus.git",
+    "serialport": "^9.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krakul/modbus-rtu-slave.git"
+  },
+  "keywords": [
+    "node-red",
+    "modbus"
+  ],
+  "node-red": {
+    "nodes": {
+      "Modbus-RTU-Slave": "src/modbus-rtu-slave.js"
+    }
+  },
+  "author": "Jaagup Averin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/krakul/modbus-rtu-slave/issues"
+  },
+  "homepage": "https://github.com/krakul/modbus-rtu-slave#readme"
+}
