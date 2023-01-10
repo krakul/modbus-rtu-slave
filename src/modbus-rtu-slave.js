@@ -11,15 +11,21 @@ module.exports = function (RED) {
 
         RED.nodes.createNode(this, config);
         const node = this;
+        const bufferSize = 10000
         const bufferSizeFactor = 2 // uint16
+
+        const coilsOffset = 1
+        const discreteOffset = 10001
+        const inputOffset = 30001
+        const holdingOffset = 40001
 
         node.slaveId = parseInt(config.slaveId)
         node.serialPort = config.serialPort
         node.baudRate = parseInt(config.baudRate)
-        node.coilsBufferSize = parseInt(config.coilsBufferSize) * bufferSizeFactor
-        node.discreteBufferSize = parseInt(config.discreteBufferSize) * bufferSizeFactor
-        node.holdingBufferSize = parseInt(config.holdingBufferSize) * bufferSizeFactor
-        node.inputBufferSize = parseInt(config.inputBufferSize) * bufferSizeFactor
+        node.coilsBufferSize = bufferSize * bufferSizeFactor
+        node.discreteBufferSize = bufferSize * bufferSizeFactor
+        node.inputBufferSize = bufferSize * bufferSizeFactor
+        node.holdingBufferSize = bufferSize * bufferSizeFactor
         node.showErrors = config.showErrors
         node.logEnabled = config.logEnabled
         node.port = null
@@ -76,8 +82,8 @@ module.exports = function (RED) {
                 node.server = new Modbus.server.RTU(node.port, {
                     coils: Buffer.alloc(node.coilsBufferSize, 0),
                     discrete: Buffer.alloc(node.discreteBufferSize, 0),
-                    holding: Buffer.alloc(node.holdingBufferSize, 0),
                     input: Buffer.alloc(node.inputBufferSize, 0),
+                    holding: Buffer.alloc(node.holdingBufferSize, 0),
                     slaveId: node.slaveId,
                     logEnabled: node.logEnabled
                 })
@@ -99,14 +105,71 @@ module.exports = function (RED) {
         node.connect()
 
         node.on('input', function (msg, send, done) {
-            // TODO: Finish input handling for all registers depending on requirements.
+            node.error(msg)
 
-            const func = msg['payload']['function']
-            const address = msg['payload']['address']
+            const registerNum = msg['payload']['register']
+            if (typeof registerNum !== 'number') {
+                node.logError("invalid register: " + registerNum)
+                return
+            }
 
-            if (func === 'writeMultipleRegisters') {
-                const values = msg['payload']['values']
-                node.server.injectWriteMultipleRegisters(address, values)
+            // convert register number to buffer-local address and pick the correct buffer:
+            let localAddress
+            let buffer
+            if (registerNum < discreteOffset) {
+                // coils
+                node.error("updating coils")
+                localAddress = registerNum - coilsOffset
+                buffer = node.server.coils
+            } else if (registerNum < inputOffset) {
+                // discrete
+                node.error("updating discrete")
+                localAddress = registerNum - discreteOffset
+                buffer = node.server.discrete
+            } else if (registerNum < holdingOffset) {
+                // input
+                node.error("updating input")
+                localAddress = registerNum - inputOffset
+                buffer = node.server.input
+            } else {
+                // holding
+                node.error("updating holding")
+                localAddress = registerNum - holdingOffset
+                buffer = node.server.holding
+            }
+
+            // in case of coils/discrete registers, the data field must contain an array of bools
+            // in case of input/holding registers, the data field must contain an array of uint16s
+            let data = msg['payload']['data']
+            if (typeof data !== 'object') {
+                node.logError("invalid data: " + data)
+                return
+            }
+
+            node.logError('putting ' + data + ' to ' + localAddress)
+
+            // This implementation is inspired by the node-modbus implementation in order to be compatible with it:
+            if (registerNum >= inputOffset) { // uint16s in these registers:
+                // convert array of numbers to uint16s:
+                let bfr = Buffer.alloc(data.length * bufferSizeFactor)
+                data.forEach((v, i) => {
+                    bfr.writeUInt16BE(v, i * bufferSizeFactor)
+                })
+                // copy uint16s into buffer:
+                localAddress *= bufferSizeFactor
+                buffer.fill(new Uint8Array(bfr), localAddress, localAddress + data.length * bufferSizeFactor)
+            } else { // bools in these registers:
+                for (let i = 0; i < data.length; i++) {
+                    const oldValue = buffer.readUInt8(Math.floor(localAddress / 8))
+                    let newValue
+                    if (data[i]) { // set bit
+                        newValue = oldValue | Math.pow(2, localAddress % 8)
+                    } else { // clear bit
+                        newValue = oldValue & ~Math.pow(2, localAddress % 8)
+                    }
+                    buffer.writeUInt8(newValue, Math.floor(localAddress / 8))
+                    localAddress++
+                }
             }
         })
 

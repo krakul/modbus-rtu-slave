@@ -1,7 +1,7 @@
 {
   "name": "modbus-rtu-slave",
   "version": "1.0.0",
-  "description": "Provides basic node for simulating a modbus RTU slave.",
+  "description": "Provides basic nodes for simulating a modbus RTU slave.",
   "main": "modbus-rtu-slave.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -20,7 +20,8 @@
   ],
   "node-red": {
     "nodes": {
-      "Modbus-RTU-Slave": "src/modbus-rtu-slave.js"
+      "Modbus-RTU-Slave": "src/modbus-rtu-slave.js",
+      "Modbus-RTU-Writer": "src/modbus-rtu-writer.js"
     }
   },
   "author": "Jaagup Averin",

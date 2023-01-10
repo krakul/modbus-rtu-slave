@@ -4,13 +4,9 @@
         color: '#E9967A',
         defaults: {
             name: {value:""},
-            slaveId: {value: "", required:true},
-            serialPort: {value: "", required:true},
-            baudRate: {value: "", required:true},
-            coilsBufferSize: {value: 10000, required:true},
-            discreteBufferSize: {value: 10000, required:true},
-            holdingBufferSize: {value: 10000, required:true},
-            inputBufferSize: {value: 10000, required:true},
+            slaveId: {value: "-1", required:true},
+            serialPort: {value: "/dev/ttyUSB0", required:true},
+            baudRate: {value: "9600", required:true},
             logEnabled: {value:false},
             showErrors: {value:false},
         },
@@ -31,32 +27,15 @@
     <hr>
     <div class="form-row">
         <label for="node-input-slaveId"> Slave ID</label>
-        <input type="text" id="node-input-slaveId" placeholder="0">
+        <input type="text" id="node-input-slaveId" placeholder="-1">
     </div>
     <div class="form-row">
         <label for="node-input-serialPort"><i class="fa fa-random"></i> Serial port</label>
-        <input type="text" id="node-input-serialPort" placeholder="/dev/ttyUSB">
+        <input type="text" id="node-input-serialPort" placeholder="/dev/ttyUSB0">
     </div>
     <div class="form-row">
         <label for="node-input-baudRate"><i class="fa fa-cog"></i> Baud rate</label>
         <input type="text" id="node-input-baudRate" placeholder="9600">
-    </div>
-    <hr>
-    <div class="form-row">
-        <label for="node-input-coilsBufferSize"><i class="icon-tag"></i> Coil buffers</label>
-        <input type="text" id="node-input-coilsBufferSize" placeholder="10000">
-    </div>
-    <div class="form-row">
-        <label for="node-input-discreteBufferSize"><i class="icon-tag"></i> Discrete buffers</label>
-        <input type="text" id="node-input-discreteBufferSize" placeholder="10000">
-    </div>
-    <div class="form-row">
-        <label for="node-input-holdingBufferSize"><i class="icon-tag"></i> Holding buffers</label>
-        <input type="text" id="node-input-holdingBufferSize" placeholder="10000">
-    </div>
-    <div class="form-row">
-        <label for="node-input-inputBufferSize"><i class="icon-tag"></i> Input buffers</label>
-        <input type="text" id="node-input-inputBufferSize" placeholder="10000">
     </div>
     <hr>
     <div class="form-row">
@@ -69,6 +48,21 @@
     </div>
 </script>
 
+
 <script type="text/html" data-help-name="Modbus-RTU-Slave">
-    <p>A basic node that acts as a Modbus RTU slave. Serial port and baud must be configured. Only listens to requests directed at Slave ID, or, if Slave ID == -1, listens to all incoming requests.</p>
+    <p>
+        Acts as a Modbus RTU slave.<br>
+        Only listens to requests directed at configured Slave ID, or, if Slave ID == -1, listens to all incoming requests.<br><br>
+        In order to write coils, a message with the following payload format must be passed as input:<br>
+        {<br>
+            "register": TARGET_REGISTER,<br>
+            "data": [ BOOL, BOOL, BOOL ]<br>
+        }<br><br>
+        In order to write registers, a message with the following payload format must be passed as input:<br>
+        {<br>
+            "register": TARGET_REGISTER,<br>
+            "data": [ U16, U16, U16 ]<br>
+        }<br>
+        * register must be between [1:49999] and will automatically be converted to [0:9999] address-space.
+    </p>
 </script>
