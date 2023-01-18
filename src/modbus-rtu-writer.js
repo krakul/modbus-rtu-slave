@@ -22,14 +22,16 @@ module.exports = function (RED) {
             sendMsg["payload"]["data"] = []
 
             let data = sendMsg["payload"]["data"]
-            if (node.inputType === 'Bool') {
+            if (node.inputType === '1bit') {
                 data.push(msg['payload'])
-            } else if (node.inputType === 'U16') {
-                data.push(msg['payload'])
-            } else if (node.inputType === 'U32') {
-                // TODO: Finish interface between Writer and Slave.
-                data.push(msg['payload'] && 0xFF00)
-                data.push(msg['payload'] && 0x00FF)
+            } else if (node.inputType === '16bit') {
+                data.push(new Uint16Array([msg['payload']])[0])
+            } else if (node.inputType === '32bit') {
+                // Convert to two U16 in big-endian:
+                let num = msg['payload']
+                let arr = new Uint16Array([(num & 0xFFFF0000) >> 16, (num & 0x0000FFFF) ])
+                data.push(arr[0])
+                data.push(arr[1])
             } else {
                 node.error('unsupported inputType: ' + node.inputType)
             }

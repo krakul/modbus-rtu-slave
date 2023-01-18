@@ -5,7 +5,7 @@
         defaults: {
             name: {value:""},
             register: {value: "", required:true},
-            inputType: {value: "Bool", required: true},
+            inputType: {value: "16bit", required: true},
         },
         inputs: 1,
         outputs: 1,
@@ -29,9 +29,9 @@
     <div class="form-row">
         <label for="node-input-inputType"><i class="icon-list"></i> Input type</label>
         <select id="node-input-inputType">
-            <option value="Bool">Bit (Bool)</option>
-            <option value="U16">Number (U16)</option>
-            <option value="U32">Number (U32)</option>
+            <option value="1bit">Bool (1bit) </option>
+            <option value="16bit">Number (16bit)</option>
+            <option value="32bit">Number (32bit)</option>
         </select>
     </div>
 </script>
@@ -40,7 +40,8 @@
 <script type="text/html" data-help-name="Modbus-RTU-Writer">
     <p>
         Can be used to simplify writing registers into the Modbus-RTU-Slave module.<br>
-        Converts common types such as U16 and U36 into appropriate arrays and passes them into the Modbus-RTU-Slave.<br>
+        Converts common types such as bools and numbers into u16-arrays and passes them into the Modbus-RTU-Slave.<br>
+        Note that the user is responsible for assuring that the entered number fits into the selected amount of bits!<br>
         Currently does not support writing multiple values at once, see Modbus-RTU-Slave help instead.
     </p>
 </script>
