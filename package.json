@@ -1,6 +1,6 @@
 {
-  "name": "modbus-rtu-slave",
-  "version": "1.0.0",
+  "name": "node-red-modbus-rtu-slave",
+  "version": "0.1.0",
   "description": "Provides basic nodes for simulating a modbus RTU slave.",
   "main": "modbus-rtu-slave.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "modbus"
   ],
   "node-red": {
+    "version": ">=2.0.0",
     "nodes": {
       "Modbus-RTU-Slave": "src/modbus-rtu-slave.js",
       "Modbus-RTU-Writer": "src/modbus-rtu-writer.js"
