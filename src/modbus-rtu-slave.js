@@ -11,7 +11,7 @@ module.exports = function (RED) {
 
         RED.nodes.createNode(this, config);
         const node = this;
-        const bufferSize = 10000
+        const bufferSize = 50000
         const bufferSizeFactor = 2 // uint16
 
         const coilsOffset = 1
@@ -22,6 +22,9 @@ module.exports = function (RED) {
         node.slaveId = parseInt(config.slaveId)
         node.serialPort = config.serialPort
         node.baudRate = parseInt(config.baudRate)
+        node.dataBits = parseInt(config.dataBits)
+        node.stopBits = parseInt(config.stopBits)
+        node.parity = config.parity
         node.coilsBufferSize = bufferSize * bufferSizeFactor
         node.discreteBufferSize = bufferSize * bufferSizeFactor
         node.inputBufferSize = bufferSize * bufferSizeFactor
@@ -71,6 +74,9 @@ module.exports = function (RED) {
                 // Open port:
                 node.port = new SerialPort(node.serialPort, {
                     baudRate: node.baudRate,
+                    dataBits: node.dataBits,
+                    stopBits: node.stopBits,
+                    parity: node.parity,
                     autoOpen: false
                 })
                 node.port.on('error', function (err) {
@@ -113,28 +119,42 @@ module.exports = function (RED) {
                 return
             }
 
+            let convertToLocal = msg['payload']['convertToLocal']
+            if (typeof convertToLocal === 'undefined') {
+                convertToLocal = false
+            }
+
+
             // convert register number to buffer-local address and pick the correct buffer:
-            let localAddress
+            let localAddress = registerNum
             let buffer
             if (registerNum < discreteOffset) {
                 // coils
                 node.error("updating coils")
-                localAddress = registerNum - coilsOffset
+                if (convertToLocal) {
+                    localAddress = registerNum - coilsOffset
+                }
                 buffer = node.server.coils
             } else if (registerNum < inputOffset) {
                 // discrete
                 node.error("updating discrete")
-                localAddress = registerNum - discreteOffset
+                if (convertToLocal) {
+                    localAddress = registerNum - discreteOffset
+                }
                 buffer = node.server.discrete
             } else if (registerNum < holdingOffset) {
                 // input
                 node.error("updating input")
-                localAddress = registerNum - inputOffset
+                if (convertToLocal) {
+                    localAddress = registerNum - inputOffset
+                }
                 buffer = node.server.input
             } else {
                 // holding
                 node.error("updating holding")
-                localAddress = registerNum - holdingOffset
+                if (convertToLocal) {
+                    localAddress = registerNum - holdingOffset
+                }
                 buffer = node.server.holding
             }
 

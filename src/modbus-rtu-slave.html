@@ -7,6 +7,9 @@
             slaveId: {value: "-1", required:true},
             serialPort: {value: "/dev/ttyUSB0", required:true},
             baudRate: {value: "9600", required:true},
+            dataBits: {value: "8", required:true},
+            stopBits: {value: "1", required:true},
+            parity: {value: "none", required:true},
             logEnabled: {value:false},
             showErrors: {value:false},
         },
@@ -37,6 +40,24 @@
         <label for="node-input-baudRate"><i class="fa fa-cog"></i> Baud rate</label>
         <input type="text" id="node-input-baudRate" placeholder="9600">
     </div>
+    <div class="form-row">
+        <label for="node-input-dataBits"><i class="fa fa-cog"></i> Data bits</label>
+        <input type="text" id="node-input-dataBits" placeholder="8">
+    </div>
+    <div class="form-row">
+        <label for="node-input-stopBits"><i class="fa fa-cog"></i> Stop bits</label>
+        <input type="text" id="node-input-stopBits" placeholder="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-parity"><i class="fa fa-cog"></i> Parity</label>
+        <select id="node-input-parity">
+            <option value="none">None</option>
+            <option value="even">Even</option>
+            <option value="mark">Mark</option>
+            <option value="odd">Odd</option>
+            <option value="space">Space</option>
+        </select>
+    </div>
     <hr>
     <div class="form-row">
         <label for="node-input-logEnabled"><i class="fa fa-th"></i> Log enabled</label>
@@ -63,6 +84,5 @@
             "register": TARGET_REGISTER,<br>
             "data": [ U16, U16, U16 ]<br>
         }<br>
-        * register must be between [1:49999] and will automatically be converted to [0:9999] address-space.
     </p>
 </script>

@@ -14,11 +14,13 @@ module.exports = function (RED) {
 
         node.register = parseInt(config.register)
         node.inputType = config.inputType
+        node.convertToLocal = config.convertToLocal
 
         node.on('input', function (msg, send, done) {
             let sendMsg = {}
             sendMsg["payload"] = {}
             sendMsg["payload"]["register"] = node.register
+            sendMsg["payload"]["convertToLocal"] = node.convertToLocal
             sendMsg["payload"]["data"] = []
 
             let data = sendMsg["payload"]["data"]
