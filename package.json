@@ -1,6 +1,6 @@
 {
   "name": "@krakul/node-red-modbus-rtu-slave",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Provides basic nodes for simulating a modbus RTU slave.",
   "main": "modbus-rtu-slave.js",
   "scripts": {
@@ -24,6 +24,9 @@
       "Modbus-RTU-Slave": "src/modbus-rtu-slave.js",
       "Modbus-RTU-Writer": "src/modbus-rtu-writer.js"
     }
+  },
+  "engines": {
+    "node": ">=12.0.0"
   },
   "author": "Jaagup Averin",
   "license": "MIT",

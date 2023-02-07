@@ -1,0 +1,371 @@
+[
+    {
+        "id": "f9209159ad660491",
+        "type": "tab",
+        "label": "Modbus-RTU-Slave-Example",
+        "disabled": false,
+        "info": "An example for using the Modbus-RTU-Slave node."
+    },
+    {
+        "id": "28d1143635aaaaed",
+        "type": "debug",
+        "z": "f9209159ad660491",
+        "name": "Debugger",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "cce556a148ee3af6",
+        "type": "inject",
+        "z": "f9209159ad660491",
+        "name": "Write value '360360'",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "360360",
+        "payloadType": "num",
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "d5c6d4b834d7854c"
+            ]
+        ]
+    },
+    {
+        "id": "e6cc5fdbd877e519",
+        "type": "inject",
+        "z": "f9209159ad660491",
+        "name": "Write value '60000'",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "60000",
+        "payloadType": "num",
+        "x": 150,
+        "y": 140,
+        "wires": [
+            [
+                "6587b14a32bf9123"
+            ]
+        ]
+    },
+    {
+        "id": "4e7c3d9c91c1dc9b",
+        "type": "Modbus-RTU-Slave",
+        "z": "f9209159ad660491",
+        "name": "Slave",
+        "slaveId": "30",
+        "serialPort": "/dev/ttyUSB0",
+        "baudRate": "9600",
+        "dataBits": "8",
+        "stopBits": "1",
+        "parity": "none",
+        "logEnabled": false,
+        "showErrors": true,
+        "x": 670,
+        "y": 160,
+        "wires": [
+            [
+                "28d1143635aaaaed"
+            ]
+        ]
+    },
+    {
+        "id": "d5c6d4b834d7854c",
+        "type": "Modbus-RTU-Writer",
+        "z": "f9209159ad660491",
+        "name": "uint32 to address 30001",
+        "register": "30001",
+        "inputType": "32bit",
+        "convertToLocal": true,
+        "x": 410,
+        "y": 100,
+        "wires": [
+            [
+                "4e7c3d9c91c1dc9b"
+            ]
+        ]
+    },
+    {
+        "id": "6587b14a32bf9123",
+        "type": "Modbus-RTU-Writer",
+        "z": "f9209159ad660491",
+        "name": "uint16 to address 30003",
+        "register": "30003",
+        "inputType": "16bit",
+        "convertToLocal": true,
+        "x": 410,
+        "y": 140,
+        "wires": [
+            [
+                "4e7c3d9c91c1dc9b"
+            ]
+        ]
+    },
+    {
+        "id": "e7d708b0cd52bddc",
+        "type": "Modbus-RTU-Writer",
+        "z": "f9209159ad660491",
+        "name": "bool to address 100",
+        "register": "100",
+        "inputType": "1bit",
+        "convertToLocal": true,
+        "x": 430,
+        "y": 180,
+        "wires": [
+            [
+                "4e7c3d9c91c1dc9b"
+            ]
+        ]
+    },
+    {
+        "id": "4ab47915d26bad71",
+        "type": "Modbus-RTU-Writer",
+        "z": "f9209159ad660491",
+        "name": "bool to address 100",
+        "register": "100",
+        "inputType": "1bit",
+        "convertToLocal": true,
+        "x": 430,
+        "y": 220,
+        "wires": [
+            [
+                "4e7c3d9c91c1dc9b"
+            ]
+        ]
+    },
+    {
+        "id": "5165d022e0ef772a",
+        "type": "inject",
+        "z": "f9209159ad660491",
+        "name": "Write 'true'",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 180,
+        "y": 180,
+        "wires": [
+            [
+                "e7d708b0cd52bddc"
+            ]
+        ]
+    },
+    {
+        "id": "1f01f91b4f4495fa",
+        "type": "inject",
+        "z": "f9209159ad660491",
+        "name": "Write 'false'",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 170,
+        "y": 220,
+        "wires": [
+            [
+                "4ab47915d26bad71"
+            ]
+        ]
+    },
+    {
+        "id": "4d2aeb4c34b6446f",
+        "type": "modbus-read",
+        "z": "f9209159ad660491",
+        "name": "Read 2 words from 30001",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "30",
+        "dataType": "InputRegister",
+        "adr": "0",
+        "quantity": "2",
+        "rate": "1",
+        "rateUnit": "m",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "40a47411f380fe7d",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": true,
+        "x": 430,
+        "y": 420,
+        "wires": [
+            [
+                "5eb586ef04c161e5"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "5eb586ef04c161e5",
+        "type": "debug",
+        "z": "f9209159ad660491",
+        "name": "Debugger",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "3a20af6ccbe9873e",
+        "type": "comment",
+        "z": "f9209159ad660491",
+        "name": "Note that these modbus nodes used local addresses [0:9999].",
+        "info": "",
+        "x": 320,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "0ba72f17695b10d2",
+        "type": "modbus-read",
+        "z": "f9209159ad660491",
+        "name": "Read 8 bits from 100",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "30",
+        "dataType": "Coil",
+        "adr": "99",
+        "quantity": "1",
+        "rate": "1",
+        "rateUnit": "m",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "40a47411f380fe7d",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": true,
+        "x": 450,
+        "y": 500,
+        "wires": [
+            [
+                "5eb586ef04c161e5"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "b13a45a6622ef94b",
+        "type": "modbus-read",
+        "z": "f9209159ad660491",
+        "name": "Read 1 word from 30003",
+        "topic": "",
+        "showStatusActivities": false,
+        "logIOActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "unitid": "30",
+        "dataType": "InputRegister",
+        "adr": "2",
+        "quantity": "1",
+        "rate": "1",
+        "rateUnit": "m",
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "server": "40a47411f380fe7d",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": true,
+        "x": 430,
+        "y": 460,
+        "wires": [
+            [
+                "5eb586ef04c161e5"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "d82c63150860fc67",
+        "type": "comment",
+        "z": "f9209159ad660491",
+        "name": "Note that these modbus nodes use global addresses [1:50000]",
+        "info": "",
+        "x": 300,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "40a47411f380fe7d",
+        "type": "modbus-client",
+        "name": "Slave",
+        "clienttype": "simpleser",
+        "bufferCommands": true,
+        "stateLogEnabled": true,
+        "queueLogEnabled": false,
+        "failureLogEnabled": false,
+        "tcpHost": "127.0.0.1",
+        "tcpPort": "502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB1",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": "8",
+        "serialStopbits": "1",
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": "",
+        "commandDelay": "1",
+        "clientTimeout": "1000",
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": "2000",
+        "parallelUnitIdsAllowed": true
+    }
+]
