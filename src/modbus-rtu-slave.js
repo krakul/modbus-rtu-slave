@@ -69,7 +69,9 @@ module.exports = function (RED) {
 
         node.connect = function () {
             node.showDisconnectedStatus()
-
+            if (node.port && node.port.isOpen) {
+                return; // Avoid reconnection if already connected or in the process
+            }
             try {
                 // Open port:
                 node.port = new SerialPort(node.serialPort, {
@@ -108,23 +110,103 @@ module.exports = function (RED) {
             }
         }
 
-        node.connect()
+        function UpdateConnection(connection){
+            clearInterval(node.portPeriodicUpdateIntervalId)
 
+            // closes the connection if connection property is not true
+            if(connection !== true){
+                node.port.close()
+                node.log("Closing Connection")
+                node.showDisconnectedStatus()
+                return
+            }
+
+            if (node.port && node.port.isOpen) {
+                node.port.close(function (err) {
+                    if (err) {
+                        node.logError(err);
+                    } 
+                    else {
+                        node.logError("Port closed successfully.");
+                        
+                        node.connect(); // Reconnect with new settings
+                    }
+                });
+            } 
+            else {
+                node.connect(); // Connect if the port isn't open
+            }
+        }
+
+        
+        node.connect()
+        
+        
         node.on('input', function (msg, send, done) {
             node.error(msg)
+            
+            // Only update node connection, if the payload contains a slaveId
+            if(msg['payload']['slaveId'] !== undefined){
+                let slaveId = msg['payload']['slaveId']
+                if (typeof slaveId !== 'number') {
+                    node.logError("invalid slaveId: " + slaveId)
+                }
+                node.slaveId = slaveId
+    
+                let baudRate = msg['payload']['baudRate']
+                if (typeof baudRate !== 'number') {
+                    node.logError("invalid baudRate: " + baudRate)
+                }
+                node.baudRate = baudRate
+    
+                let dataBits = msg['payload']['dataBits']
+                if (typeof dataBits !== 'number') {
+                    node.logError("invalid dataBits: " + dataBits)
+                }
+                node.dataBits = dataBits
+    
+                let stopBits = msg['payload']['stopBits']
+                if (typeof stopBits !== 'number') {
+                    node.logError("invalid stopBits: " + stopBits)
+                }
+                node.stopBits = stopBits
+    
+                let parity = msg['payload']['parity']
+                if (typeof parity !== 'string') {
+                    node.logError("invalid parity: " + parity)
+                }
+                node.parity = parity
+    
+                let connection = msg['payload']['connection']
+                if (typeof connection !== 'boolean') {
+                    node.logError("invalid connection: " + connection)
+                }
 
+                node.logError("Connection Properties:" + 
+                "\nslaveId: " + slaveId +
+                "\nbaudRate: " + baudRate +
+                "\ndataBits: " + dataBits +
+                "\nstopBits: " + stopBits +
+                "\nparity: " + parity +
+                "\nconnection" + connection)
+
+                UpdateConnection(connection)   
+
+                return
+            }
+            
             const registerNum = msg['payload']['register']
             if (typeof registerNum !== 'number') {
                 node.logError("invalid register: " + registerNum)
                 return
             }
-
+            
             let convertToLocal = msg['payload']['convertToLocal']
             if (typeof convertToLocal === 'undefined') {
                 convertToLocal = false
             }
-
-
+            
+            
             // convert register number to buffer-local address and pick the correct buffer:
             let localAddress = registerNum
             let buffer
@@ -191,6 +273,7 @@ module.exports = function (RED) {
                     localAddress++
                 }
             }
+            
         })
 
         node.on('close', function (done) {
