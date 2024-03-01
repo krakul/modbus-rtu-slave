@@ -11,6 +11,7 @@
             stopBits: {value: "1", required:true},
             parity: {value: "none", required:true},
             logEnabled: {value:false},
+            debugEnabled: {value:false},
             showErrors: {value:false},
         },
         inputs: 1,
@@ -62,6 +63,10 @@
     <div class="form-row">
         <label for="node-input-logEnabled"><i class="fa fa-th"></i> Log enabled</label>
         <input type="checkbox" id="node-input-logEnabled" placeholder="false">
+    </div>
+    <div class="form-row">
+        <label for="node-input-debugEnabled"><i class="fa fa-th"></i> Debug enabled</label>
+        <input type="checkbox" id="node-input-debugEnabled" placeholder="false">
     </div>
     <div class="form-row">
         <label for="node-input-showErrors"><i class="fa fa-th"></i> Show errors</label>
