@@ -31,6 +31,7 @@ module.exports = function (RED) {
         node.holdingBufferSize = bufferSize * bufferSizeFactor
         node.showErrors = config.showErrors
         node.logEnabled = config.logEnabled
+        node.debugEnabled = config.debugEnabled
         node.port = null
         node.server = null
         node.portPeriodicUpdateIntervalId = null
@@ -50,6 +51,12 @@ module.exports = function (RED) {
                 } else {
                     console.error(err)
                 }
+            }
+        }
+
+        node.logDebug = function(message) {
+            if(message && node.debugEnabled) {
+                node.warn(message)
             }
         }
 
@@ -111,7 +118,7 @@ module.exports = function (RED) {
         node.connect()
 
         node.on('input', function (msg, send, done) {
-            node.error(msg)
+            node.logDebug(msg)
 
             const registerNum = msg['payload']['register']
             if (typeof registerNum !== 'number') {
@@ -130,28 +137,28 @@ module.exports = function (RED) {
             let buffer
             if (registerNum < discreteOffset) {
                 // coils
-                node.error("updating coils")
+                node.logDebug("updating coils")
                 if (convertToLocal) {
                     localAddress = registerNum - coilsOffset
                 }
                 buffer = node.server.coils
             } else if (registerNum < inputOffset) {
                 // discrete
-                node.error("updating discrete")
+                node.logDebug("updating discrete")
                 if (convertToLocal) {
                     localAddress = registerNum - discreteOffset
                 }
                 buffer = node.server.discrete
             } else if (registerNum < holdingOffset) {
                 // input
-                node.error("updating input")
+                node.logDebug("updating input")
                 if (convertToLocal) {
                     localAddress = registerNum - inputOffset
                 }
                 buffer = node.server.input
             } else {
                 // holding
-                node.error("updating holding")
+                node.logDebug("updating holding")
                 if (convertToLocal) {
                     localAddress = registerNum - holdingOffset
                 }
