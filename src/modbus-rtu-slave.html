@@ -1,88 +1,118 @@
 <script type="text/javascript">
-    RED.nodes.registerType('Modbus-RTU-Slave',{
-        category: 'modbus',
-        color: '#E9967A',
-        defaults: {
-            name: {value:""},
-            slaveId: {value: "-1", required:true},
-            serialPort: {value: "/dev/ttyUSB0", required:true},
-            baudRate: {value: "9600", required:true},
-            dataBits: {value: "8", required:true},
-            stopBits: {value: "1", required:true},
-            parity: {value: "none", required:true},
-            logEnabled: {value:false},
-            showErrors: {value:false},
-        },
-        inputs: 1,
-        outputs: 1,
-        icon: "db.svg",
-        label: function() {
-            return this.name||"Modbus RTU Slave";
-        }
+    RED.nodes.registerType("Modbus-RTU-Slave", {
+      category: "modbus",
+      color: "#E9967A",
+      defaults: {
+        name: { value: "" },
+        slaveId: { value: "-1", required: true },
+        serialPort: { value: "/dev/ttyUSB0", required: true },
+        baudRate: { value: "9600", required: true },
+        dataBits: { value: "8", required: true },
+        stopBits: { value: "1", required: true },
+        parity: { value: "none", required: true },
+        logEnabled: { value: false },
+        showErrors: { value: false },
+      },
+      inputs: 1,
+      outputs: 1,
+      icon: "db.svg",
+      label: function () {
+        return this.name || "Modbus RTU Slave";
+      },
     });
-</script>
-
-<script type="text/html" data-template-name="Modbus-RTU-Slave">
+  </script>
+  
+  <script type="text/html" data-template-name="Modbus-RTU-Slave">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+      <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+      <input type="text" id="node-input-name" placeholder="Name" />
     </div>
-    <hr>
+    <hr />
     <div class="form-row">
-        <label for="node-input-slaveId"> Slave ID</label>
-        <input type="text" id="node-input-slaveId" placeholder="-1">
-    </div>
-    <div class="form-row">
-        <label for="node-input-serialPort"><i class="fa fa-random"></i> Serial port</label>
-        <input type="text" id="node-input-serialPort" placeholder="/dev/ttyUSB0">
+      <label for="node-input-slaveId"> Slave ID</label>
+      <input type="text" id="node-input-slaveId" placeholder="-1" />
     </div>
     <div class="form-row">
-        <label for="node-input-baudRate"><i class="fa fa-cog"></i> Baud rate</label>
-        <input type="text" id="node-input-baudRate" placeholder="9600">
+      <label for="node-input-serialPort"
+        ><i class="fa fa-random"></i> Serial port</label
+      >
+      <input type="text" id="node-input-serialPort" placeholder="/dev/ttyUSB0" />
     </div>
     <div class="form-row">
-        <label for="node-input-dataBits"><i class="fa fa-cog"></i> Data bits</label>
-        <input type="text" id="node-input-dataBits" placeholder="8">
+      <label for="node-input-baudRate"><i class="fa fa-cog"></i> Baud rate</label>
+      <input type="text" id="node-input-baudRate" placeholder="9600" />
     </div>
     <div class="form-row">
-        <label for="node-input-stopBits"><i class="fa fa-cog"></i> Stop bits</label>
-        <input type="text" id="node-input-stopBits" placeholder="1">
+      <label for="node-input-dataBits"><i class="fa fa-cog"></i> Data bits</label>
+      <input type="text" id="node-input-dataBits" placeholder="8" />
     </div>
     <div class="form-row">
-        <label for="node-input-parity"><i class="fa fa-cog"></i> Parity</label>
-        <select id="node-input-parity">
-            <option value="none">None</option>
-            <option value="even">Even</option>
-            <option value="mark">Mark</option>
-            <option value="odd">Odd</option>
-            <option value="space">Space</option>
-        </select>
-    </div>
-    <hr>
-    <div class="form-row">
-        <label for="node-input-logEnabled"><i class="fa fa-th"></i> Log enabled</label>
-        <input type="checkbox" id="node-input-logEnabled" placeholder="false">
+      <label for="node-input-stopBits"><i class="fa fa-cog"></i> Stop bits</label>
+      <input type="text" id="node-input-stopBits" placeholder="1" />
     </div>
     <div class="form-row">
-        <label for="node-input-showErrors"><i class="fa fa-th"></i> Show errors</label>
-        <input type="checkbox" id="node-input-showErrors" placeholder="false">
+      <label for="node-input-parity"><i class="fa fa-cog"></i> Parity</label>
+      <select id="node-input-parity">
+        <option value="none">None</option>
+        <option value="even">Even</option>
+        <option value="mark">Mark</option>
+        <option value="odd">Odd</option>
+        <option value="space">Space</option>
+      </select>
     </div>
-</script>
-
-
-<script type="text/html" data-help-name="Modbus-RTU-Slave">
+    <hr />
+    <div class="form-row">
+      <label for="node-input-logEnabled"
+        ><i class="fa fa-th"></i> Log enabled</label
+      >
+      <input type="checkbox" id="node-input-logEnabled" placeholder="false" />
+    </div>
+    <div class="form-row">
+      <label for="node-input-showErrors"
+        ><i class="fa fa-th"></i> Show errors</label
+      >
+      <input type="checkbox" id="node-input-showErrors" placeholder="false" />
+    </div>
+  </script>
+  
+  <script type="text/html" data-help-name="Modbus-RTU-Slave">
     <p>
-        Acts as a Modbus RTU slave.<br>
-        Only listens to requests directed at configured Slave ID, or, if Slave ID == -1, listens to all incoming requests.<br><br>
-        In order to write coils, a message with the following payload format must be passed as input:<br>
-        {<br>
-            "register": TARGET_REGISTER,<br>
-            "data": [ BOOL, BOOL, BOOL ]<br>
-        }<br><br>
-        In order to write registers, a message with the following payload format must be passed as input:<br>
-        {<br>
-            "register": TARGET_REGISTER,<br>
-            "data": [ U16, U16, U16 ]<br>
-        }<br>
+      Acts as a Modbus RTU slave.<br />
+      Only listens to requests directed at configured Slave ID, or, if Slave ID ==
+      -1, listens to all incoming requests.<br /><br />
+      In order to write coils, a message with the following payload format must be
+      passed as input:<br />
+      {<br />
+      "register": TARGET_REGISTER,<br />
+      "data": [ BOOL, BOOL, BOOL ]<br />
+      }<br /><br />
+      In order to write registers, a message with the following payload format
+      must be passed as input:<br />
+      {<br />
+      "register": TARGET_REGISTER,<br />
+      "data": [ U16, U16, U16 ]<br />
+      }<br /><br />
+      To inject the connection properties for the slave, you need to send a
+      message with a specific payload structure. The message should contain the
+      following properties:<br /><br />
+  
+      slaveId (number): The ID of the slave. For example, 1.<br />
+      baudRate (number): The baud rate for the connection. For example, 9600.<br />
+      dataBits (number): The number of data bits. For example, 8.<br />
+      stopBits (number): The number of stop bits. Typically, 1.<br />
+      parity (string): The parity setting. It can be "none", "even", or "odd".<br />
+      connection (boolean): A flag to indicate whether to establish (true) or
+      close (false) the connection.<br />
+      Here is an example of a correctly formatted payload:<br /><br />
+  
+      {<br />
+      "slaveId": 1,<br />
+      "baudRate": 9600,<br />
+      "dataBits": 8,<br />
+      "stopBits": 1,<br />
+      "parity": "none",<br />
+      "connection": true<br />
+      }<br />
     </p>
-</script>
+  </script>
+  
