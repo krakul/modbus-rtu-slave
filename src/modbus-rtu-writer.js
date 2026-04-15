@@ -3,7 +3,6 @@ module.exports = function (RED) {
     'use strict'
 
     const Modbus = require('jsmodbus')
-    const SerialPort = require('serialport')
 
     function ModbusRTUWriter(config) {
         // --------------------

@@ -3,7 +3,7 @@ module.exports = function (RED) {
     'use strict'
 
     const Modbus = require('jsmodbus')
-    const SerialPort = require('serialport')
+    const { SerialPort } = require('serialport')
 
     function ModbusRTUSlave(config) {
         // --------------------
@@ -74,7 +74,8 @@ module.exports = function (RED) {
             }
             try {
                 // Open port:
-                node.port = new SerialPort(node.serialPort, {
+                node.port = new SerialPort({
+					path: node.serialPort,
                     baudRate: node.baudRate,
                     dataBits: node.dataBits,
                     stopBits: node.stopBits,
